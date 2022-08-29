@@ -72,7 +72,7 @@ public IEnumerable<WeatherForecast> Get()
 
 ## PHP example
 
-```
+```php
 $sToken = "you-api-token";
 $sReqTimeStamp = time();
 $sReqNonce = getNonce();
@@ -92,4 +92,25 @@ function getNonce(){
     }
     return $t1;
 }
+```
+
+## .Net example
+
+```csharp
+var unixTimestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
+var sNonce = Guid.NewGuid().ToString();
+
+ArrayList AL = new ArrayList();
+AL.Add("you-api-token");
+AL.Add(unixTimestamp.ToString());
+AL.Add(sNonce);
+AL.Sort(StringComparer.Ordinal);
+
+var raw = string.Join("", AL.ToArray());
+using System.Security.Cryptography.SHA1 sha1 = System.Security.Cryptography.SHA1.Create();
+byte[] encry = sha1.ComputeHash(Encoding.UTF8.GetBytes(raw));
+string sign = string.Join("", encry.Select(b => string.Format("{0:x2}", b)).ToArray()).ToLower();
+
+var client = new HttpClient();
+string jsoninfo = await client.GetStringAsync($"http://localhost:5177/weatherforecast?timestamp={unixTimestamp}&nonce={sNonce}&signature={sign}");
 ```
