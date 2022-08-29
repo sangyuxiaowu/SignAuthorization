@@ -2,11 +2,13 @@
 
 简易的 API url 签名验证中间件，通过简单的url参数验证请求是否合法。
 
-Simple API url signature verification middleware.Verify that the request is legitimate with a simple url parameter.
-
 1. 将token、timestamp、nonce三个参数进行字典序排序 
 1. 将三个参数字符串拼接成一个字符串进行sha1加密
 1. 开发者获得加密后的字符串可与 signature 对比
+
+<hr>
+
+Simple API url signature verification middleware.Verify that the request is legitimate with a simple url parameter.
 
 1. Sort the three parameters of token, timestamp and nonce in lexicographic order
 1. Concatenate the three parameter strings into one string for sha1 encryption
