@@ -64,7 +64,7 @@ public IEnumerable<WeatherForecast> Get()
 | UnauthorizedBack | {"success":false,"status":10000,"msg":"Unauthorized"} |  json return content after validation failure <br> 验证失败后的 json 返回 |
 | sToken | SignAuthorizationMiddleware | API token for sign <br> API签名使用的token |
 | WithPath | false |  Need to include the requested path when signing, starting with '/' <br> 签名时需要包含请求的路径，以 '/' 开头 |
-| TimeOut |  5 | Signature expiration time <br> 签名过期时间 |
+| Expire |  5 | Signature expiration time (unit: second) <br> 签名过期时间（单位:秒） |
 | nTimeStamp | timestamp  |  GET parameter name for timestamp <br> 时间戳的GET参数名 |
 | nNonce | nonce  | GET parameter name of random number <br> 随机数的GET参数名 |
 | nSign | signature | Sign GET parameter name <br> 签名的GET参数名 |

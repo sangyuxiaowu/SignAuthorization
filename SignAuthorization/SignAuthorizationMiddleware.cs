@@ -37,7 +37,7 @@ namespace Sang.AspNetCore.SignAuthorization
                 {
                     // 检查时间
                     var unixTimestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
-                    if (unixTimestamp - Convert.ToDouble(sTimeStamp[0]) <= _options.TimeOut)
+                    if (unixTimestamp - Convert.ToDouble(sTimeStamp[0]) <= _options.Expire)
                     {
                         // 字典排序
                         ArrayList AL = new ArrayList();

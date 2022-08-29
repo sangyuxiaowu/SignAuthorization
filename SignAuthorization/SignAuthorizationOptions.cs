@@ -28,7 +28,7 @@
         /// <summary>
         /// 超时时间，超过该时间认为签名过期（单位：秒）
         /// </summary>
-        public double TimeOut { get; set; } = 5;
+        public double Expire { get; set; } = 5;
 
         /// <summary>
         /// 时间戳的GET参数名
