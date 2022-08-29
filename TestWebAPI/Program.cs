@@ -10,7 +10,9 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 
-app.UseSignAuthorization();
+app.UseSignAuthorization(opt => {
+    opt.sToken = "you-api-token";
+});
 
 app.MapControllers();
 
