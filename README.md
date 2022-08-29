@@ -1,10 +1,10 @@
-# SignAuthorization
+ï»¿# SignAuthorization
 
-¼òÒ×µÄ API url Ç©ÃûÑéÖ¤ÖĞ¼ä¼ş£¬Í¨¹ı¼òµ¥µÄurl²ÎÊıÑéÖ¤ÇëÇóÊÇ·ñºÏ·¨¡£
+ç®€æ˜“çš„ API url ç­¾åéªŒè¯ä¸­é—´ä»¶ï¼Œé€šè¿‡ç®€å•çš„urlå‚æ•°éªŒè¯è¯·æ±‚æ˜¯å¦åˆæ³•ã€‚
 
-1. ½«token¡¢timestamp¡¢nonceÈı¸ö²ÎÊı½øĞĞ×ÖµäĞòÅÅĞò 
-1. ½«Èı¸ö²ÎÊı×Ö·û´®Æ´½Ó³ÉÒ»¸ö×Ö·û´®½øĞĞsha1¼ÓÃÜ
-1. ¿ª·¢Õß»ñµÃ¼ÓÃÜºóµÄ×Ö·û´®¿ÉÓë signature ¶Ô±È
+1. å°†tokenã€timestampã€nonceä¸‰ä¸ªå‚æ•°è¿›è¡Œå­—å…¸åºæ’åº 
+1. å°†ä¸‰ä¸ªå‚æ•°å­—ç¬¦ä¸²æ‹¼æ¥æˆä¸€ä¸ªå­—ç¬¦ä¸²è¿›è¡Œsha1åŠ å¯†
+1. å¼€å‘è€…è·å¾—åŠ å¯†åçš„å­—ç¬¦ä¸²å¯ä¸ signature å¯¹æ¯”
 
 <hr>
 
@@ -20,7 +20,7 @@ Simple API url signature verification middleware.Verify that the request is legi
 
 Enable this middleware before `app.MapControllers();`.
 
-ÔÚ  `app.MapControllers();` Ç°ÆôÓÃÕâ¸öÖĞ¼ä¼ş¡£
+åœ¨  `app.MapControllers();` å‰å¯ç”¨è¿™ä¸ªä¸­é—´ä»¶ã€‚
 
 ```
 app.UseSignAuthorization(opt => {
@@ -32,7 +32,7 @@ app.UseSignAuthorization(opt => {
 
 Add `SignAuthorizeAttribute` where signing is required.
 
-ÔÚĞèÒªÇ©ÃûµÄµØ·½Ìí¼Ó `SignAuthorizeAttribute`¡£
+åœ¨éœ€è¦ç­¾åçš„åœ°æ–¹æ·»åŠ  `SignAuthorizeAttribute`ã€‚
 
 like this:
 
@@ -59,15 +59,15 @@ public IEnumerable<WeatherForecast> Get()
 ### SignAuthorizationOptions
 
 
-| ²ÎÊı | default | ËµÃ÷|
+| å‚æ•° | default | è¯´æ˜|
 | --- | --- | --- |
-| UnauthorizedBack | {"success":false,"status":10000,"msg":"Unauthorized"} |  json return content after validation failure <br> ÑéÖ¤Ê§°ÜºóµÄ json ·µ»Ø |
-| sToken | SignAuthorizationMiddleware | API token for sign <br> APIÇ©ÃûÊ¹ÓÃµÄtoken |
-| WithPath | false |  Need to include the requested path when signing, starting with '/' <br> Ç©ÃûÊ±ĞèÒª°üº¬ÇëÇóµÄÂ·¾¶£¬ÒÔ '/' ¿ªÍ· |
-| TimeOut |  5 | Signature expiration time <br> Ç©Ãû¹ıÆÚÊ±¼ä |
-| nTimeStamp | timestamp  |  GET parameter name for timestamp <br> Ê±¼ä´ÁµÄGET²ÎÊıÃû |
-| nNonce | nonce  | GET parameter name of random number <br> Ëæ»úÊıµÄGET²ÎÊıÃû |
-| nSign | signature | Sign GET parameter name <br> Ç©ÃûµÄGET²ÎÊıÃû |
+| UnauthorizedBack | {"success":false,"status":10000,"msg":"Unauthorized"} |  json return content after validation failure <br> éªŒè¯å¤±è´¥åçš„ json è¿”å› |
+| sToken | SignAuthorizationMiddleware | API token for sign <br> APIç­¾åä½¿ç”¨çš„token |
+| WithPath | false |  Need to include the requested path when signing, starting with '/' <br> ç­¾åæ—¶éœ€è¦åŒ…å«è¯·æ±‚çš„è·¯å¾„ï¼Œä»¥ '/' å¼€å¤´ |
+| TimeOut |  5 | Signature expiration time <br> ç­¾åè¿‡æœŸæ—¶é—´ |
+| nTimeStamp | timestamp  |  GET parameter name for timestamp <br> æ—¶é—´æˆ³çš„GETå‚æ•°å |
+| nNonce | nonce  | GET parameter name of random number <br> éšæœºæ•°çš„GETå‚æ•°å |
+| nSign | signature | Sign GET parameter name <br> ç­¾åçš„GETå‚æ•°å |
 
 
 ## PHP example
