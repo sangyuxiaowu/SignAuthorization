@@ -1,5 +1,7 @@
 ﻿# SignAuthorization
 
+[![NuGet version (Sang.AspNetCore.SignAuthorization)](https://img.shields.io/nuget/v/Sang.AspNetCore.SignAuthorization.svg?style=flat-square)](https://www.nuget.org/packages/Sang.AspNetCore.SignAuthorization/)
+
 简易的 API url 签名验证中间件，通过简单的url参数验证请求是否合法。
 
 1. 将token、timestamp、nonce三个参数进行字典序排序 
@@ -18,6 +20,20 @@ Simple API url signature verification middleware.Verify that the request is legi
 
 ##### Step 1 
 
+Add this package.
+
+```bash
+Install-Package Sang.AspNetCore.SignAuthorization
+```
+
+or
+
+```bash
+dotnet add package Sang.AspNetCore.SignAuthorization
+```
+
+##### Step 2 
+
 Enable this middleware before `app.MapControllers();`.
 
 在  `app.MapControllers();` 前启用这个中间件。
@@ -28,7 +44,7 @@ app.UseSignAuthorization(opt => {
 });
 ```
 
-##### Step 2
+##### Step 3
 
 Add `SignAuthorizeAttribute` where signing is required.
 

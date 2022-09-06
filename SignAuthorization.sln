@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32819.101
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sang.AspNetCore.SignAuthorization", "SignAuthorization\Sang.AspNetCore.SignAuthorization.csproj", "{90039DEC-41CB-4BC1-A07C-BD53138E2E8A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sang.AspNetCore.SignAuthorization", "SignAuthorization\Sang.AspNetCore.SignAuthorization.csproj", "{90039DEC-41CB-4BC1-A07C-BD53138E2E8A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestWebAPI", "TestWebAPI\TestWebAPI.csproj", "{ABCD7BD0-577B-4ACF-96E4-754ADCE790DF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestWebAPI", "TestWebAPI\TestWebAPI.csproj", "{ABCD7BD0-577B-4ACF-96E4-754ADCE790DF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestWebMiniAPI", "TestWebMiniAPI\TestWebMiniAPI.csproj", "{69308B3E-9A90-4EB5-BF02-2F5FFA4F9ADB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestWebMiniAPI", "TestWebMiniAPI\TestWebMiniAPI.csproj", "{69308B3E-9A90-4EB5-BF02-2F5FFA4F9ADB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
