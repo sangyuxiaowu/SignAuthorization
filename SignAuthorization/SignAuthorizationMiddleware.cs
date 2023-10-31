@@ -6,16 +6,31 @@ using System.Security.Cryptography;
 
 namespace Sang.AspNetCore.SignAuthorization
 {
+    /// <summary>
+    /// 中间件，用于处理基于签名的授权验证。
+    /// </summary>
     public class SignAuthorizationMiddleware
     {
         private readonly RequestDelegate _next;
         private readonly SignAuthorizationOptions _options;
+
+        /// <summary>
+        /// 初始化 SignAuthorizationMiddleware 的新实例。
+        /// </summary>
+        /// <param name="next">表示要执行的下一个中间件的委托。</param>
+        /// <param name="options">签名授权选项，包含用于验证的配置信息。</param>
+        /// <exception cref="ArgumentNullException">当 'next' 参数为 null 时引发。</exception>
         public SignAuthorizationMiddleware(RequestDelegate next, SignAuthorizationOptions options)
         {
             _next = next ?? throw new ArgumentNullException(nameof(next));
             _options = options;
         }
 
+        /// <summary>  
+        /// 处理签名授权验证的核心方法。  
+        /// </summary>  
+        /// <param name="context">当前的 HTTP 上下文。</param>  
+        /// <exception cref="ArgumentNullException">当 'context' 参数为 null 时引发。</exception>  
         public async Task Invoke(HttpContext context)
         {
 
@@ -40,16 +55,16 @@ namespace Sang.AspNetCore.SignAuthorization
                     if (unixTimestamp - Convert.ToDouble(sTimeStamp[0]) <= _options.Expire)
                     {
                         // 字典排序
-                        ArrayList AL = new ArrayList();
-                        AL.Add(_options.sToken);
-                        AL.Add(sTimeStamp[0]);
-                        AL.Add(sNonce[0]);
+                        var parameterList = new ArrayList();
+                        parameterList.Add(_options.sToken);
+                        parameterList.Add(sTimeStamp[0]);
+                        parameterList.Add(sNonce[0]);
                         // 签名包含路径
-                        if (_options.WithPath) AL.Add(context.Request.Path.Value);
-                        AL.Sort(StringComparer.Ordinal);
+                        if (_options.WithPath) parameterList.Add(context.Request.Path.Value);
+                        parameterList.Sort(StringComparer.Ordinal);
 
                         // 计算 SHA1
-                        var raw = string.Join("", AL.ToArray());
+                        var raw = string.Join("", parameterList.ToArray());
                         using SHA1 sha1 = SHA1.Create();
                         byte[] encry = sha1.ComputeHash(Encoding.UTF8.GetBytes(raw));
                         string sign = string.Join("", encry.Select(b => string.Format("{0:x2}", b)).ToArray()).ToLower();
