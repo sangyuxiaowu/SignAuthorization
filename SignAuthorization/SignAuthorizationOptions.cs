@@ -44,6 +44,11 @@
         /// 签名的GET参数名
         /// </summary>
         public string nSign { get; set; } = "signature";
+
+        /// <summary>
+        /// 额外的参数名，签名时将额外添加该参数名的参数值
+        /// </summary>
+        public string nExtra { get; set; } = "";
     }
 
 }

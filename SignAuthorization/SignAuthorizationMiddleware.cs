@@ -63,6 +63,16 @@ namespace Sang.AspNetCore.SignAuthorization
                         if (_options.WithPath) parameterList.Add(context.Request.Path.Value);
                         parameterList.Sort(StringComparer.Ordinal);
 
+                        // 添加额外参数
+                        if (!string.IsNullOrEmpty(_options.nExtra))
+                        {
+                            var sExtra = context.Request.Query[_options.nExtra];
+                            if (sExtra.Count > 0)
+                            {
+                                parameterList.Add(sExtra[0]);
+                            }
+                        }
+
                         // 计算 SHA1
                         var raw = string.Join("", parameterList.ToArray());
                         using SHA1 sha1 = SHA1.Create();

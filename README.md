@@ -84,6 +84,7 @@ public IEnumerable<WeatherForecast> Get()
 | nTimeStamp | timestamp  |  GET parameter name for timestamp <br> 时间戳的GET参数名 |
 | nNonce | nonce  | GET parameter name of random number <br> 随机数的GET参数名 |
 | nSign | signature | Sign GET parameter name <br> 签名的GET参数名 |
+| nExtra | | Extra GET parameter name <br> 额外参数的GET参数名 |
 
 
 ## PHP example
