@@ -131,3 +131,22 @@ string sign = string.Join("", encry.Select(b => string.Format("{0:x2}", b)).ToAr
 var client = new HttpClient();
 string jsoninfo = await client.GetStringAsync($"http://localhost:5177/weatherforecast?timestamp={unixTimestamp}&nonce={sNonce}&signature={sign}");
 ```
+
+## Use MakeSignAuthorization
+
+Make sign authorization string.
+
+```csharp
+var unixTimestamp = DateTimeOffset.Now.ToUnixTimeSeconds().ToString();
+var sNonce = Guid.NewGuid().ToString("N");
+var sToken = "you-api-token";
+var sPath = "/weatherforecast";
+var sExtra = "1"; // extra parameter: extra=1
+string sign = MakeSignAuthorization.MakeSign(sToken, unixTimestamp, sNonce, sPath, sExtra);
+```
+
+Make sign URL.
+
+```csharp
+var url = MakeSignAuthorization.MakeSignUrl("http://localhost:5177",  new SignAuthorizationOptions());
+```

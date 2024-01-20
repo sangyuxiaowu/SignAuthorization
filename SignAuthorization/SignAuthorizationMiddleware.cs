@@ -1,8 +1,5 @@
-﻿using System.Collections;
-using System.Net;
+﻿using System.Net;
 using System.Text.Json;
-using System.Text;
-using System.Security.Cryptography;
 
 namespace Sang.AspNetCore.SignAuthorization
 {
@@ -54,30 +51,25 @@ namespace Sang.AspNetCore.SignAuthorization
                     var unixTimestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
                     if (unixTimestamp - Convert.ToDouble(sTimeStamp[0]) <= _options.Expire)
                     {
-                        // 字典排序
-                        var parameterList = new ArrayList();
-                        parameterList.Add(_options.sToken);
-                        parameterList.Add(sTimeStamp[0]);
-                        parameterList.Add(sNonce[0]);
+                        
                         // 签名包含路径
-                        if (_options.WithPath) parameterList.Add(context.Request.Path.Value);
-                        parameterList.Sort(StringComparer.Ordinal);
-
-                        // 添加额外参数
+                        var sPath = _options.WithPath ? context.Request.Path.Value : "";
+                        // 处理额外参数
+                        var sExtra = "";
                         if (!string.IsNullOrEmpty(_options.nExtra))
                         {
-                            var sExtra = context.Request.Query[_options.nExtra];
-                            if (sExtra.Count > 0)
+                            var sExtraList = context.Request.Query[_options.nExtra];
+                            if (sExtraList.Count > 0)
                             {
-                                parameterList.Add(sExtra[0]);
+                                sExtra = sExtraList[0];
+                            }
+                            else
+                            {
+                                // 要求进行额外参数参与验签，但是没有额外参数，直接赋值，让验签失败
+                                sExtra = "Err.";
                             }
                         }
-
-                        // 计算 SHA1
-                        var raw = string.Join("", parameterList.ToArray());
-                        using SHA1 sha1 = SHA1.Create();
-                        byte[] encry = sha1.ComputeHash(Encoding.UTF8.GetBytes(raw));
-                        string sign = string.Join("", encry.Select(b => string.Format("{0:x2}", b)).ToArray()).ToLower();
+                        var sign = MakeSignAuthorization.MakeSign(_options.sToken, sTimeStamp[0], sNonce[0], sExtra, sPath);
 
                         // 验签通过
                         if (sSign[0] == sign)
