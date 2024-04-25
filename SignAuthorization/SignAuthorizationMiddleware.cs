@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using Microsoft.Extensions.Primitives;
+using System.Net;
 using System.Text.Json;
 
 namespace Sang.AspNetCore.SignAuthorization
@@ -40,9 +41,10 @@ namespace Sang.AspNetCore.SignAuthorization
             // 检查授权情况
             if (endpoint != null && endpoint.Metadata.Any(x => x is SignAuthorizeAttribute))
             {
-                var sTimeStamp = context.Request.Query[_options.nTimeStamp];
-                var sNonce = context.Request.Query[_options.nNonce];
-                var sSign = context.Request.Query[_options.nSign];
+                
+                var sTimeStamp = _options.UseHeader ? context.Request.Headers[_options.nTimeStamp] : context.Request.Query[_options.nTimeStamp];
+                var sNonce = _options.UseHeader ? context.Request.Headers[_options.nNonce] : context.Request.Query[_options.nNonce];
+                var sSign = _options.UseHeader ? context.Request.Headers[_options.nSign] : context.Request.Query[_options.nSign];
 
                 // 检查验签参数
                 if (sTimeStamp.Count > 0 && sSign.Count > 0 && sNonce.Count > 0)
@@ -58,7 +60,7 @@ namespace Sang.AspNetCore.SignAuthorization
                         var sExtra = "";
                         if (!string.IsNullOrEmpty(_options.nExtra))
                         {
-                            var sExtraList = context.Request.Query[_options.nExtra];
+                            var sExtraList = _options.UseHeader ? context.Request.Headers[_options.nExtra] : context.Request.Query[_options.nExtra];
                             if (sExtraList.Count > 0)
                             {
                                 sExtra = sExtraList[0];
@@ -89,6 +91,19 @@ namespace Sang.AspNetCore.SignAuthorization
             }
 
             await _next(context);
+        }
+
+
+        private StringValues GetHeaderValue(HttpContext context, string key)
+        {
+            if (_options.UseHeader)
+            {
+                return context.Request.Headers.TryGetValue(key, out var headerValue) ? headerValue : StringValues.Empty;
+            }
+            else
+            {
+                return context.Request.Query.TryGetValue(key, out var queryValue) ? queryValue : StringValues.Empty;
+            }
         }
     }
 }
