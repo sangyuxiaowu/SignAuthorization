@@ -24,6 +24,8 @@
         {
             var options = new SignAuthorizationOptions();
             configureOptions(options);
+            // 配置验证
+            options.Validate();
             app.UseMiddleware<SignAuthorizationMiddleware>(options);
         }
     }
