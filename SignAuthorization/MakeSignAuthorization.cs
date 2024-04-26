@@ -21,7 +21,7 @@ namespace Sang.AspNetCore.SignAuthorization
         /// <returns></returns>
         public static string MakeSign(string sToken, string sTimeStamp, string sNonce, string sExtra = "", string? sPath = "")
         {
-            var parameterList = new ArrayList
+            var parameterList = new List<string>
             {
                 sToken,
                 sTimeStamp,
@@ -38,11 +38,20 @@ namespace Sang.AspNetCore.SignAuthorization
             // 字典排序
             parameterList.Sort(StringComparer.Ordinal);
             // 计算 SHA1
-            var raw = string.Join("", parameterList.ToArray());
+            var raw = new StringBuilder();
+            foreach (var item in parameterList)
+            {
+                raw.Append(item);
+            }
+
             using SHA1 sha1 = SHA1.Create();
-            byte[] encry = sha1.ComputeHash(Encoding.UTF8.GetBytes(raw));
-            string sign = string.Join("", encry.Select(b => string.Format("{0:x2}", b)).ToArray()).ToLower();
-            return sign;
+            byte[] encry = sha1.ComputeHash(Encoding.UTF8.GetBytes(raw.ToString()));
+            var signBuilder = new StringBuilder();
+            foreach (byte b in encry)
+            {
+                signBuilder.AppendFormat("{0:x2}", b);
+            }
+            return signBuilder.ToString().ToLower();
         }
 
         /// <summary>
