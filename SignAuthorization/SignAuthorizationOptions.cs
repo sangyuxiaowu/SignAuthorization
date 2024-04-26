@@ -1,4 +1,4 @@
-namespace Sang.AspNetCore.SignAuthorization
+﻿namespace Sang.AspNetCore.SignAuthorization
 {
     /// <summary>
     /// SignAuthorization 中间件配置参数
@@ -49,6 +49,12 @@ namespace Sang.AspNetCore.SignAuthorization
         /// 额外的参数名，签名时将额外添加该参数名的参数值
         /// </summary>
         public string nExtra { get; set; } = "";
+
+        /// <summary>
+        /// 是否使用HTTP头的参数来进行鉴权，默认为false
+        /// </summary>
+        public bool UseHeader { get; set; } = false;
+
         /// <summary>
         /// 验证配置信息
         /// </summary>
