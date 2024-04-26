@@ -19,7 +19,7 @@ namespace Sang.AspNetCore.SignAuthorization
         /// <param name="sExtra">额外参数内容</param>
         /// <param name="sPath">路径信息</param>
         /// <returns></returns>
-        public static string MakeSign(string sToken, string sTimeStamp, string sNonce, string sExtra = "", string sPath = "")
+        public static string MakeSign(string sToken, string sTimeStamp, string sNonce, string sExtra = "", string? sPath = "")
         {
             var parameterList = new ArrayList
             {
