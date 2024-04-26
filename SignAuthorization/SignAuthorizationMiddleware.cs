@@ -42,9 +42,9 @@ namespace Sang.AspNetCore.SignAuthorization
             if (endpoint != null && endpoint.Metadata.Any(x => x is SignAuthorizeAttribute))
             {
                 
-                var sTimeStamp = _options.UseHeader ? context.Request.Headers[_options.nTimeStamp] : context.Request.Query[_options.nTimeStamp];
-                var sNonce = _options.UseHeader ? context.Request.Headers[_options.nNonce] : context.Request.Query[_options.nNonce];
-                var sSign = _options.UseHeader ? context.Request.Headers[_options.nSign] : context.Request.Query[_options.nSign];
+                var sTimeStamp = GetHeaderValue(context, _options.nTimeStamp);
+                var sNonce = GetHeaderValue(context, _options.nNonce);
+                var sSign = GetHeaderValue(context, _options.nSign);
 
                 // 检查验签参数
                 if (sTimeStamp.Count > 0 && sSign.Count > 0 && sNonce.Count > 0)
@@ -60,7 +60,7 @@ namespace Sang.AspNetCore.SignAuthorization
                         var sExtra = "";
                         if (!string.IsNullOrEmpty(_options.nExtra))
                         {
-                            var sExtraList = _options.UseHeader ? context.Request.Headers[_options.nExtra] : context.Request.Query[_options.nExtra];
+                            var sExtraList = GetHeaderValue(context, _options.nExtra);
                             if (sExtraList.Count > 0)
                             {
                                 sExtra = sExtraList[0];
