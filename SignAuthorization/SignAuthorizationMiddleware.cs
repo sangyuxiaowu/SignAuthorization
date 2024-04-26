@@ -11,17 +11,20 @@ namespace Sang.AspNetCore.SignAuthorization
     {
         private readonly RequestDelegate _next;
         private readonly SignAuthorizationOptions _options;
+        private readonly ILogger _logger;
 
         /// <summary>
         /// 初始化 SignAuthorizationMiddleware 的新实例。
         /// </summary>
         /// <param name="next">表示要执行的下一个中间件的委托。</param>
+        /// <param name="loggerFactory">The <see cref="ILoggerFactory"/> used for logging.</param>
         /// <param name="options">签名授权选项，包含用于验证的配置信息。</param>
         /// <exception cref="ArgumentNullException">当 'next' 参数为 null 时引发。</exception>
-        public SignAuthorizationMiddleware(RequestDelegate next, SignAuthorizationOptions options)
+        public SignAuthorizationMiddleware(RequestDelegate next, ILoggerFactory loggerFactory, SignAuthorizationOptions options)
         {
             _next = next ?? throw new ArgumentNullException(nameof(next));
             _options = options;
+            _logger = loggerFactory.CreateLogger<SignAuthorizationMiddleware>();
         }
 
         /// <summary>  
@@ -41,7 +44,7 @@ namespace Sang.AspNetCore.SignAuthorization
             // 检查授权情况
             if (endpoint != null && endpoint.Metadata.Any(x => x is SignAuthorizeAttribute))
             {
-                
+
                 var sTimeStamp = GetHeaderValue(context, _options.nTimeStamp);
                 var sNonce = GetHeaderValue(context, _options.nNonce);
                 var sSign = GetHeaderValue(context, _options.nSign);
@@ -69,6 +72,8 @@ namespace Sang.AspNetCore.SignAuthorization
                             {
                                 // 要求进行额外参数参与验签，但是没有额外参数，直接赋值，让验签失败
                                 sExtra = "Err.";
+                                // 额外参数为空时，签名错误
+                                _logger.LogWarning("SignAuthorization: Extra parameter is empty.");
                             }
                         }
                         var sign = MakeSignAuthorization.MakeSign(_options.sToken, sTimeStamp[0], sNonce[0], sExtra, sPath);
@@ -78,10 +83,22 @@ namespace Sang.AspNetCore.SignAuthorization
                         {
                             await _next(context);
                             return;
+                        }else
+                        {
+                            // 签名错误
+                            _logger.LogWarning("SignAuthorization: Signature error.");
                         }
 
+                    }else
+                    {
+                        // 时间戳过期
+                        _logger.LogWarning("SignAuthorization: Timestamp expired.");
                     }
 
+                }else
+                {
+                    // 时间戳、随机数、签名参数不全
+                    _logger.LogWarning("SignAuthorization: Invalid request.");
                 }
 
                 context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
