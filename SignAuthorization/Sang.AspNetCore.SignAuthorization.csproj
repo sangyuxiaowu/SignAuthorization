@@ -8,12 +8,12 @@
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <Version>2.1.0</Version>
     <Authors>SangSQ(桑世强)</Authors>
-    <Description>AspNet Web API Simple Sign Authorization</Description>
+    <Description>AspNet Web API Simple Sign Authorization and Cookie Authorization</Description>
 	<PackageIcon>ico.png</PackageIcon>
     <PackageProjectUrl>https://github.com/sangyuxiaowu/SignAuthorization</PackageProjectUrl>
     <RepositoryUrl>https://github.com/sangyuxiaowu/SignAuthorization</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>Authorization;signtrue,SignAuthorization</PackageTags>
+    <PackageTags>Authorization;signtrue;SignAuthorization;CookieAuthorization</PackageTags>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>

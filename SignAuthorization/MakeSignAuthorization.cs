@@ -55,6 +55,44 @@ namespace Sang.AspNetCore.SignAuthorization
         }
 
         /// <summary>
+        /// 生成 Cookie 签名
+        /// </summary>
+        /// <param name="sToken">Token</param>
+        /// <param name="userName">用户名</param>
+        /// <param name="timeStamp">时间戳</param>
+        /// <returns></returns>
+        public static string MakeCookieSign(string sToken, string userName, string timeStamp)
+        {
+            if (string.IsNullOrWhiteSpace(userName))
+            {
+                throw new ArgumentNullException(nameof(userName));
+            }
+            if (string.IsNullOrWhiteSpace(timeStamp))
+            {
+                throw new ArgumentNullException(nameof(timeStamp));
+            }
+            return MakeSign(sToken, timeStamp, userName);
+        }
+
+        /// <summary>
+        /// 生成 Cookie 字符串
+        /// </summary>
+        /// <param name="sToken">Token</param>
+        /// <param name="userName">用户名</param>
+        /// <param name="timeStamp">时间戳</param>
+        /// <param name="separator">分隔符</param>
+        /// <returns></returns>
+        public static string MakeCookieValue(string sToken, string userName, string timeStamp, string separator = "|")
+        {
+            if (string.IsNullOrEmpty(separator))
+            {
+                throw new ArgumentException("separator cannot be null or empty.", nameof(separator));
+            }
+            var sign = MakeCookieSign(sToken, userName, timeStamp);
+            return string.Join(separator, userName, timeStamp, sign);
+        }
+
+        /// <summary>
         /// 为URL生成签名
         /// </summary>
         /// <param name="uri">URL</param>
