@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <OutputType>Library</OutputType>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <Version>2.1.0</Version>
+    <Version>2.2.0</Version>
     <Authors>SangSQ(桑世强)</Authors>
     <Description>AspNet Web API Simple Sign Authorization and Cookie Authorization</Description>
 	<PackageIcon>ico.png</PackageIcon>
