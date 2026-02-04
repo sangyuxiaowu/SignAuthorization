@@ -67,6 +67,8 @@ public IEnumerable<WeatherForecast> Get()
 | 参数               | 默认值                                                          | 说明                                                   |
 |-------------------|---------------------------------------------------------------|-------------------------------------------------------|
 | UnauthorizedBack  | {"success":false,"status":10000,"msg":"Unauthorized"}         | 验证失败后的json返回内容                               |
+| UnauthorizedBackJson | null                                                        | 预序列化 JSON 字符串，用于 AOT 场景                     |
+| UnauthorizedStatusCode | 401                                                     | 验证失败时返回的 HTTP 状态码                            |
 | sToken            | SignAuthorizationMiddleware                                   | API签名使用的token                                    |
 | WithPath          | false                                                         | 签名时需要包含请求的路径，以'/'开头                    |
 | Expire            | 5                                                             | 签名过期时间（单位：秒）                               |
@@ -214,6 +216,8 @@ app.MapGet("/secure", (HttpContext context) =>
 | 参数               | 默认值                     | 说明                                      |
 |-------------------|----------------------------|-------------------------------------------|
 | UnauthorizedBack  | {"success":false,"status":10000,"msg":"Unauthorized"} | 验证失败后的json返回内容                 |
+| UnauthorizedBackJson | null                   | 预序列化 JSON 字符串，用于 AOT 场景       |
+| UnauthorizedStatusCode | 401                | 验证失败时返回的 HTTP 状态码              |
 | sToken            | CookieAuthorizationMiddleware | Cookie 签名使用的 token                |
 | CookieName        | SignAuthorization           | Cookie 字段名                              |
 | CookieSeparator   | |                          | Cookie 内容分隔符                          |

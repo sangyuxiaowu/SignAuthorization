@@ -67,6 +67,8 @@ public IEnumerable<WeatherForecast> Get()
 | Parameter          | Default Value                                                    | Description                                             |
 |--------------------|------------------------------------------------------------------|---------------------------------------------------------|
 | UnauthorizedBack   | {"success":false,"status":10000,"msg":"Unauthorized"}            | JSON return content after validation failure            |
+| UnauthorizedBackJson | null                                                           | Pre-serialized JSON response for AOT scenarios          |
+| UnauthorizedStatusCode | 401                                                          | HTTP status code for unauthorized response              |
 | sToken             | SignAuthorizationMiddleware                                      | API token for signing                                   |
 | WithPath           | false                                                            | Include the requested path in the signature, starting with '/' |
 | Expire             | 5                                                                | Signature expiration time (unit: seconds)               |
@@ -214,6 +216,8 @@ app.MapGet("/secure", (HttpContext context) =>
 | Parameter          | Default Value            | Description                                         |
 |--------------------|--------------------------|-----------------------------------------------------|
 | UnauthorizedBack   | {"success":false,"status":10000,"msg":"Unauthorized"} | JSON return content after validation failure        |
+| UnauthorizedBackJson | null                   | Pre-serialized JSON response for AOT scenarios      |
+| UnauthorizedStatusCode | 401                  | HTTP status code for unauthorized response          |
 | sToken             | CookieAuthorizationMiddleware | Token used to sign cookie values                |
 | CookieName         | SignAuthorization         | Cookie name                                         |
 | CookieSeparator    | |                        | Separator for cookie values                         |

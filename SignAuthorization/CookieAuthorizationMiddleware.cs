@@ -138,9 +138,16 @@ namespace Sang.AspNetCore.SignAuthorization
         private async Task Deny(HttpContext context, string reason)
         {
             _logger.LogWarning("CookieAuthorization: {Reason}", reason);
-            context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+            context.Response.StatusCode = _options.UnauthorizedStatusCode;
             context.Response.ContentType = "application/json";
-            await context.Response.WriteAsync(JsonSerializer.Serialize(_options.UnauthorizedBack));
+            if (!string.IsNullOrEmpty(_options.UnauthorizedBackJson))
+            {
+                await context.Response.WriteAsync(_options.UnauthorizedBackJson);
+            }
+            else
+            {
+                await context.Response.WriteAsync(JsonSerializer.Serialize(_options.UnauthorizedBack));
+            }
         }
     }
 }

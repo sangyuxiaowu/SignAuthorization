@@ -19,6 +19,16 @@ namespace Sang.AspNetCore.SignAuthorization
         };
 
         /// <summary>
+        /// 认证失败的返回(可选的预序列化 JSON 字符串)
+        /// </summary>
+        public string? UnauthorizedBackJson { get; set; }
+
+        /// <summary>
+        /// 认证失败时的状态代码，默认 401
+        /// </summary>
+        public int UnauthorizedStatusCode { get; set; } = 401;
+
+        /// <summary>
         /// 组件的Token
         /// </summary>
         public string sToken { get; set; } = "CookieAuthorizationMiddleware";
