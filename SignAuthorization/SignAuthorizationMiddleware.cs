@@ -101,9 +101,16 @@ namespace Sang.AspNetCore.SignAuthorization
                     _logger.LogWarning("SignAuthorization: Invalid request.");
                 }
 
-                context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                context.Response.StatusCode = _options.UnauthorizedStatusCode;
                 context.Response.ContentType = "application/json";
-                await context.Response.WriteAsync(JsonSerializer.Serialize(_options.UnauthorizedBack));
+                if (!string.IsNullOrEmpty(_options.UnauthorizedBackJson))
+                {
+                    await context.Response.WriteAsync(_options.UnauthorizedBackJson);
+                }
+                else
+                {
+                    await context.Response.WriteAsync(JsonSerializer.Serialize(_options.UnauthorizedBack));
+                }
                 return;
             }
 

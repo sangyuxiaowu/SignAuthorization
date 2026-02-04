@@ -67,6 +67,8 @@ public IEnumerable<WeatherForecast> Get()
 | Parameter          | Default Value                                                    | Description                                             |
 |--------------------|------------------------------------------------------------------|---------------------------------------------------------|
 | UnauthorizedBack   | {"success":false,"status":10000,"msg":"Unauthorized"}            | JSON return content after validation failure            |
+| UnauthorizedBackJson | null                                                           | Pre-serialized JSON response for AOT scenarios          |
+| UnauthorizedStatusCode | 401                                                          | HTTP status code for unauthorized response              |
 | sToken             | SignAuthorizationMiddleware                                      | API token for signing                                   |
 | WithPath           | false                                                            | Include the requested path in the signature, starting with '/' |
 | Expire             | 5                                                                | Signature expiration time (unit: seconds)               |
@@ -141,3 +143,87 @@ Make sign URL.
 ```csharp
 var url = MakeSignAuthorization.MakeSignUrl("http://localhost:5177",  new SignAuthorizationOptions());
 ```
+
+## Cookie Authorization
+
+Use Cookie-based authorization for simple user scenarios (for example `root`, `admin`, `init`). The cookie stores `username|timestamp|signature`.
+
+### Enable Cookie Middleware
+
+```csharp
+var cookieOptions = new CookieAuthorizationOptions
+{
+    sToken = "your-api-token",
+    CookieName = "SignAuthorization",
+    Expire = 3600,
+    ReuseExpire = true
+};
+
+cookieOptions.AllowedUsers.UnionWith(new[] { "root", "admin", "init" });
+
+app.UseCookieAuthorization(opt =>
+{
+    opt.sToken = cookieOptions.sToken;
+    opt.CookieName = cookieOptions.CookieName;
+    opt.Expire = cookieOptions.Expire;
+    opt.ReuseExpire = cookieOptions.ReuseExpire;
+    opt.CookieSeparator = cookieOptions.CookieSeparator;
+    opt.AllowedUsers.UnionWith(cookieOptions.AllowedUsers);
+});
+```
+
+### Issue Cookie
+
+```csharp
+app.MapGet("/login/{user}", (string user, HttpContext context) =>
+{
+    var timeStamp = DateTimeOffset.Now.ToUnixTimeSeconds().ToString();
+    var cookieValue = MakeSignAuthorization.MakeCookieValue(
+        "your-api-token",
+        user,
+        timeStamp,
+        "|");
+
+    context.Response.Cookies.Append(
+        "SignAuthorization",
+        cookieValue,
+        new CookieOptions
+        {
+            HttpOnly = true,
+            IsEssential = true,
+            Expires = DateTimeOffset.Now.AddSeconds(3600)
+        });
+
+    return Results.Ok(new { success = true, user });
+});
+```
+
+### Protect Endpoint
+
+```csharp
+app.MapGet("/secure", (HttpContext context) =>
+{
+    return Results.Ok(new
+    {
+        user = context.User.Identity?.Name,
+        item = context.Items["SignAuthorizationUserName"]
+    });
+}).WithMetadata(new CookieAuthorizeAttribute("root", "admin"));
+```
+
+### CookieAuthorizationOptions
+
+| Parameter          | Default Value            | Description                                         |
+|--------------------|--------------------------|-----------------------------------------------------|
+| UnauthorizedBack   | {"success":false,"status":10000,"msg":"Unauthorized"} | JSON return content after validation failure        |
+| UnauthorizedBackJson | null                   | Pre-serialized JSON response for AOT scenarios      |
+| UnauthorizedStatusCode | 401                  | HTTP status code for unauthorized response          |
+| sToken             | CookieAuthorizationMiddleware | Token used to sign cookie values                |
+| CookieName         | SignAuthorization         | Cookie name                                         |
+| CookieSeparator    | |                        | Separator for cookie values                         |
+| Expire             | 3600                      | Cookie expiration time (unit: seconds)              |
+| ReuseExpire        | true                      | Refresh cookie timestamp on successful validation   |
+| CookieOptions      | HttpOnly/IsEssential set  | Cookie options to use when refreshing               |
+| UserNameClaimType  | ClaimTypes.Name           | Claim type for user name                            |
+| UserNameItemKey    | SignAuthorizationUserName | Key for storing user name in HttpContext.Items      |
+| AllowedUsers       | empty                     | Allowed user list (empty for no restriction)        |

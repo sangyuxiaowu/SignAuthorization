@@ -67,6 +67,8 @@ public IEnumerable<WeatherForecast> Get()
 | 参数               | 默认值                                                          | 说明                                                   |
 |-------------------|---------------------------------------------------------------|-------------------------------------------------------|
 | UnauthorizedBack  | {"success":false,"status":10000,"msg":"Unauthorized"}         | 验证失败后的json返回内容                               |
+| UnauthorizedBackJson | null                                                        | 预序列化 JSON 字符串，用于 AOT 场景                     |
+| UnauthorizedStatusCode | 401                                                     | 验证失败时返回的 HTTP 状态码                            |
 | sToken            | SignAuthorizationMiddleware                                   | API签名使用的token                                    |
 | WithPath          | false                                                         | 签名时需要包含请求的路径，以'/'开头                    |
 | Expire            | 5                                                             | 签名过期时间（单位：秒）                               |
@@ -141,3 +143,87 @@ string sign = MakeSignAuthorization.MakeSign(sToken, unixTimestamp, sNonce, sPat
 ```csharp
 var url = MakeSignAuthorization.MakeSignUrl("http://localhost:5177",  new SignAuthorizationOptions());
 ```
+
+## Cookie 鉴权
+
+适用于简单用户管理场景（例如 `root`、`admin`、`init`）。Cookie 的内容格式为 `用户名|时间戳|签名`。
+
+### 启用 Cookie 中间件
+
+```csharp
+var cookieOptions = new CookieAuthorizationOptions
+{
+    sToken = "你的api-token",
+    CookieName = "SignAuthorization",
+    Expire = 3600,
+    ReuseExpire = true
+};
+
+cookieOptions.AllowedUsers.UnionWith(new[] { "root", "admin", "init" });
+
+app.UseCookieAuthorization(opt =>
+{
+    opt.sToken = cookieOptions.sToken;
+    opt.CookieName = cookieOptions.CookieName;
+    opt.Expire = cookieOptions.Expire;
+    opt.ReuseExpire = cookieOptions.ReuseExpire;
+    opt.CookieSeparator = cookieOptions.CookieSeparator;
+    opt.AllowedUsers.UnionWith(cookieOptions.AllowedUsers);
+});
+```
+
+### 生成并写入 Cookie
+
+```csharp
+app.MapGet("/login/{user}", (string user, HttpContext context) =>
+{
+    var timeStamp = DateTimeOffset.Now.ToUnixTimeSeconds().ToString();
+    var cookieValue = MakeSignAuthorization.MakeCookieValue(
+        "你的api-token",
+        user,
+        timeStamp,
+        "|");
+
+    context.Response.Cookies.Append(
+        "SignAuthorization",
+        cookieValue,
+        new CookieOptions
+        {
+            HttpOnly = true,
+            IsEssential = true,
+            Expires = DateTimeOffset.Now.AddSeconds(3600)
+        });
+
+    return Results.Ok(new { success = true, user });
+});
+```
+
+### 保护接口
+
+```csharp
+app.MapGet("/secure", (HttpContext context) =>
+{
+    return Results.Ok(new
+    {
+        user = context.User.Identity?.Name,
+        item = context.Items["SignAuthorizationUserName"]
+    });
+}).WithMetadata(new CookieAuthorizeAttribute("root", "admin"));
+```
+
+### CookieAuthorizationOptions
+
+| 参数               | 默认值                     | 说明                                      |
+|-------------------|----------------------------|-------------------------------------------|
+| UnauthorizedBack  | {"success":false,"status":10000,"msg":"Unauthorized"} | 验证失败后的json返回内容                 |
+| UnauthorizedBackJson | null                   | 预序列化 JSON 字符串，用于 AOT 场景       |
+| UnauthorizedStatusCode | 401                | 验证失败时返回的 HTTP 状态码              |
+| sToken            | CookieAuthorizationMiddleware | Cookie 签名使用的 token                |
+| CookieName        | SignAuthorization           | Cookie 字段名                              |
+| CookieSeparator   | |                          | Cookie 内容分隔符                          |
+| Expire            | 3600                        | Cookie 过期时间（单位：秒）                |
+| ReuseExpire       | true                        | 验证成功后刷新时间戳（滑动过期）          |
+| CookieOptions     | HttpOnly/IsEssential set    | 刷新时使用的 Cookie 选项                   |
+| UserNameClaimType | ClaimTypes.Name             | 用户名 Claim 类型                          |
+| UserNameItemKey   | SignAuthorizationUserName   | HttpContext.Items 存储用户的字段名        |
+| AllowedUsers      | 空                          | 允许访问的用户名列表（为空不限制）        |

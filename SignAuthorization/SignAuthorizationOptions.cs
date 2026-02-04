@@ -6,7 +6,7 @@
     public class SignAuthorizationOptions
     {
         /// <summary>
-        /// 认证失败的返回
+        /// 认证失败的返回（对象形式）
         /// </summary>
         public object UnauthorizedBack { get; set; } = new
         {
@@ -14,6 +14,17 @@
             status = 10000,
             msg = "Unauthorized"
         };
+
+        /// <summary>
+        /// 认证失败的返回（已序列化的 JSON 字符串）。
+        /// 设置后将直接写入响应，避免运行时序列化以支持 AOT。
+        /// </summary>
+        public string? UnauthorizedBackJson { get; set; }
+
+        /// <summary>
+        /// 认证失败时返回的状态码，默认 401。
+        /// </summary>
+        public int UnauthorizedStatusCode { get; set; } = 401;
 
         /// <summary>
         /// 组件的Token
